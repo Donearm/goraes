@@ -37,10 +37,13 @@ func init() {
 	}
 
 	const (
-		defInFile	= "t.json"
-		defOutFile	= "/tmp/t"
+		defSearchKey	= ""
+		defInFile		= "t.json"
+		defOutFile		= "/tmp/t"
 	)
 
+	flag.StringVar(&SearchKey, "searchkey", defSearchKey, "")
+	flag.StringVar(&SearchKey, "s", defSearchKey, "")
 	flag.StringVar(&InFile, "inputfile", defInFile, "")
 	flag.StringVar(&InFile, "i", defInFile, "")
 	flag.StringVar(&OutFile, "outputfile", defOutFile, "")
