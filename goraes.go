@@ -26,12 +26,14 @@ const (
 	ansiReset = "\033[0m"
 )
 
-var usageMessage  = `
-
-`
 
 // parse flags
 func init() {
+	var usageMessage  = `
+
+	`
+	var SearchKey, InFile, OutFile string
+	var Decrypt, Encrypt bool
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, usageMessage)
@@ -44,9 +46,6 @@ func init() {
 		defDecrypt		= false
 		defEncrypt		= false
 	)
-
-	var SearchKey, InFile, OutFile string
-	var Decrypt, Encrypt bool
 
 	flag.StringVar(&SearchKey, "searchkey", defSearchKey, "")
 	flag.StringVar(&SearchKey, "s", defSearchKey, "")
