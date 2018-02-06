@@ -40,6 +40,8 @@ func init() {
 		defSearchKey	= ""
 		defInFile		= "t.json"
 		defOutFile		= "/tmp/t"
+		defDecrypt		= false
+		defEncrypt		= false
 	)
 
 	flag.StringVar(&SearchKey, "searchkey", defSearchKey, "")
@@ -48,6 +50,11 @@ func init() {
 	flag.StringVar(&InFile, "i", defInFile, "")
 	flag.StringVar(&OutFile, "outputfile", defOutFile, "")
 	flag.StringVar(&OutFile, "o", defOutFile, "")
+	flag.BoolVar(&Decrypt, "d", defDecrypt, "")
+	flag.BoolVar(&Decrypt, "--decrypt", defDecrypt, "")
+	flag.BoolVar(&Encrypt, "e", defEncrypt, "")
+	flag.BoolVar(&Encrypt, "--encrypt", defEncrypt, "")
+
 
 }
 
