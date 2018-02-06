@@ -14,8 +14,9 @@ package main
 import (
 	"fmt"
 	"os"
-	"encoding/json"
-	"crypto/aes"
+	"flag"
+	_ "encoding/json"
+	_ "crypto/aes"
 )
 
 const (
@@ -44,6 +45,9 @@ func init() {
 		defEncrypt		= false
 	)
 
+	var SearchKey, InFile, OutFile string
+	var Decrypt, Encrypt bool
+
 	flag.StringVar(&SearchKey, "searchkey", defSearchKey, "")
 	flag.StringVar(&SearchKey, "s", defSearchKey, "")
 	flag.StringVar(&InFile, "inputfile", defInFile, "")
@@ -55,6 +59,9 @@ func init() {
 	flag.BoolVar(&Encrypt, "e", defEncrypt, "")
 	flag.BoolVar(&Encrypt, "--encrypt", defEncrypt, "")
 
+	if SearchKey == "" && Decrypt == false && Encrypt == false {
+		flag.Usage();
+	}
 
 }
 
