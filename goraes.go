@@ -30,8 +30,27 @@ const (
 // parse flags
 func init() {
 	var usageMessage  = `
+goraes [-i|-inputfile <file>] [-o|-outputfile <file>] [-s|-searchkey <word>] [-d|-decrypt|-e|-encrypt]
 
-	`
+goraes encrypts/decrypts a JSON file containing login credentials.
+
+Arguments:
+	-s|-searckey <word>
+		Search for matching account names
+
+	-i|-inputfile <file>
+		The input file
+
+	-o|-outputfile <file>
+		The output file
+
+	-d|-decrypt
+		Set program to decrypt mode
+
+	-e|-encrypt
+		Set program to encrypt mode
+
+`
 	var SearchKey, InFile, OutFile string
 	var Decrypt, Encrypt bool
 
