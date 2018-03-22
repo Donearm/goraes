@@ -14,9 +14,12 @@ package main
 import (
 	"fmt"
 	"os"
+	"io"
 	"flag"
 	_ "encoding/json"
-	_ "crypto/aes"
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
 )
 
 const (
@@ -77,14 +80,63 @@ Arguments:
 	flag.BoolVar(&Encrypt, "e", defEncrypt, "")
 	flag.BoolVar(&Encrypt, "--encrypt", defEncrypt, "")
 
-	if SearchKey == "" && Decrypt == false && Encrypt == false {
-		flag.Usage();
+/*	if SearchKey == "" && Decrypt == false && Encrypt == false {
+/*		flag.Usage();
+/*	} */
+
+}
+
+func encrypt(key []byte, text string) string {
+	plaintext := []byte(text)
+
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		panic(err)
 	}
 
+	// Encrypt using an IV at the beginning of ciphertext
+	ciphertext := make([]byte, aes.BlockSize + len(plaintext))
+	iv := ciphertext[:aes.BlockSize]
+	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
+		panic(err)
+	}
+
+	stream := cipher.NewCFBEncrypter(block, iv)
+	stream.XORKeyStream(ciphertext[aes.BlockSize:], plaintext)
+
+	return string(ciphertext)
+}
+
+func decrypt(key []byte, ciphertext string) string {
+
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		panic(err)
+	}
+
+	if len(ciphertext) < aes.BlockSize {
+		panic("ciphertext is too short")
+	}
+	iv := ciphertext[:aes.BlockSize]
+	ciphertext = ciphertext[aes.BlockSize:]
+
+	stream := cipher.NewCFBDecrypter(block, iv)
+
+	// in-place work of XORKeyStream
+	stream.XORKeyStream(ciphertext, ciphertext)
+
+	return ciphertext
 }
 
 func main() {
 	// initialize cli arguments
 	flag.Parse()
+	textToEncrypt := "abcde"
+	keyForEncryption := []byte("example key 1234")
+
+	encryptedText := encrypt(keyForEncryption, textToEncrypt)
+	fmt.Println(encryptedText)
+
+	fmt.Println(decrypt(keyForEncryption, encryptedText))
 }
 
