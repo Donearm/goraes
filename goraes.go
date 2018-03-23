@@ -138,5 +138,7 @@ func main() {
 	fmt.Println(encryptedText)
 
 	fmt.Println(decrypt(keyForEncryption, encryptedText))
+
+	config := LoadConfig()
 }
 
