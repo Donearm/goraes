@@ -91,7 +91,7 @@ func encrypt(key []byte, text string) string {
 
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		panic(err)
+		panic(err.Error())
 	}
 
 	// Encrypt using an IV at the beginning of ciphertext
@@ -111,7 +111,7 @@ func decrypt(key []byte, ciphertext string) string {
 
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		panic(err)
+		panic(err.Error())
 	}
 
 	if len(ciphertext) < aes.BlockSize {
@@ -120,10 +120,10 @@ func decrypt(key []byte, ciphertext string) string {
 	iv := ciphertext[:aes.BlockSize]
 	ciphertext = ciphertext[aes.BlockSize:]
 
-	stream := cipher.NewCFBDecrypter(block, iv)
+	stream := cipher.NewCFBDecrypter(block, []byte(iv))
 
 	// in-place work of XORKeyStream
-	stream.XORKeyStream(ciphertext, ciphertext)
+	stream.XORKeyStream([]byte(ciphertext), []byte(ciphertext))
 
 	return ciphertext
 }
