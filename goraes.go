@@ -14,12 +14,10 @@ package main
 import (
 	"fmt"
 	"os"
-	"io"
 	"flag"
 	_ "encoding/json"
-	"crypto/aes"
-	"crypto/cipher"
-	"crypto/rand"
+
+	"github.com/zfeldt/gencrypt"
 )
 
 const (
@@ -86,59 +84,34 @@ Arguments:
 
 }
 
-func encrypt(key []byte, text string) string {
-	plaintext := []byte(text)
-
-	block, err := aes.NewCipher(key)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	// Encrypt using an IV at the beginning of ciphertext
-	ciphertext := make([]byte, aes.BlockSize + len(plaintext))
-	iv := ciphertext[:aes.BlockSize]
-	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
-		panic(err)
-	}
-
-	stream := cipher.NewCFBEncrypter(block, iv)
-	stream.XORKeyStream(ciphertext[aes.BlockSize:], plaintext)
-
-	return string(ciphertext)
-}
-
-func decrypt(key []byte, ciphertext string) string {
-
-	block, err := aes.NewCipher(key)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	if len(ciphertext) < aes.BlockSize {
-		panic("ciphertext is too short")
-	}
-	iv := ciphertext[:aes.BlockSize]
-	ciphertext = ciphertext[aes.BlockSize:]
-
-	stream := cipher.NewCFBDecrypter(block, []byte(iv))
-
-	// in-place work of XORKeyStream
-	stream.XORKeyStream([]byte(ciphertext), []byte(ciphertext))
-
-	return ciphertext
-}
-
 func main() {
 	// initialize cli arguments
 	flag.Parse()
-	textToEncrypt := "abcde"
+	textToEncrypt := "abcdeFUUUUUUUU"
 	keyForEncryption := []byte("example key 1234")
 
-	encryptedText := encrypt(keyForEncryption, textToEncrypt)
-	fmt.Println(encryptedText)
+	// Get the GCM
+	gcm, err := gencrypt.NewGCM(keyForEncryption)
+	if err != nil {
+		panic(err)
+	}
 
-	fmt.Println(decrypt(keyForEncryption, encryptedText))
+	// Encrypt the data
+	encryptedText, eerr := gcm.AESEncrypt([]byte(textToEncrypt))
+	if eerr != nil {
+		panic(eerr)
+	}
 
-	config := LoadConfig()
+	fmt.Println(string(encryptedText))
+
+	// Decrypt the data
+	decryptedText, derr := gcm.AESDecrypt(encryptedText)
+	if derr != nil {
+		panic(derr)
+	}
+
+	fmt.Println(string(decryptedText))
+
+	//config := LoadConfig()
 }
 
