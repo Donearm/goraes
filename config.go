@@ -27,7 +27,8 @@ func LoadConfig() Paths {
 
 	file, oErr := os.Open("conf.json")
 	if oErr != nil {
-		panic("Couldn't open config file!")
+		// there's no config file or it is not readable. Skip it...
+		return config
 	}
 	defer file.Close()
 
@@ -36,7 +37,8 @@ func LoadConfig() Paths {
 
 	err := decoder.Decode(&config)
 	if err != nil {
-		panic(err)
+		// File isn't json or is wrong json, return nothing
+		return config
 	}
 
 	return config
