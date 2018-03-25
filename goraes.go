@@ -113,6 +113,11 @@ func main() {
 	fmt.Println(string(decryptedText))
 
 	config := LoadConfig()
-	fmt.Println(config)
+	fmt.Println(config.InFile)
+	fmt.Println(config.OutFile)
+	config.OutFile = "tantato.json"
+	fmt.Println(config.OutFile)
+
+	UpdateConfig(config)
 }
 
