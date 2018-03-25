@@ -14,7 +14,6 @@ package main
 import (
 	"encoding/json"
 	"os"
-	"fmt"
 )
 
 type Paths struct {
@@ -39,8 +38,6 @@ func LoadConfig() Paths {
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Println(config)
 
 	return config
 }

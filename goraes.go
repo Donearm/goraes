@@ -112,6 +112,7 @@ func main() {
 
 	fmt.Println(string(decryptedText))
 
-	//config := LoadConfig()
+	config := LoadConfig()
+	fmt.Println(config)
 }
 
