@@ -15,6 +15,7 @@ import (
 	"fmt"
 	"os"
 	"flag"
+	"log"
 	_ "encoding/json"
 
 	"github.com/zfeldt/gencrypt"
@@ -83,6 +84,16 @@ Arguments:
 /*	} */
 
 }
+
+func openFile(f path) *File {
+	f, err :=  os.OpenFile(f, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0600)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return f
+}
+
 
 func main() {
 	// initialize cli arguments
