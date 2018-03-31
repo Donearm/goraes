@@ -85,13 +85,13 @@ Arguments:
 
 }
 
-func openFile(f path) *File {
-	f, err :=  os.OpenFile(f, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0600)
+func openFile(f string) *os.File {
+	fl, err :=  os.OpenFile(f, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0600)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return f
+	return fl
 }
 
 
