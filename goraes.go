@@ -30,7 +30,7 @@ const (
 	ansiReset = "\033[0m"
 )
 
-var SearchKey, InFile, OutFile string
+var SearchKey, InFile, OutFile, Password string
 var Decrypt, Encrypt bool
 
 // parse flags
@@ -56,6 +56,9 @@ Arguments:
 	-e|-encrypt
 		Set program to encrypt mode
 
+	-p|-password
+		Give encryption/decryption password directly on the command line
+
 `
 
 	flag.Usage = func() {
@@ -68,6 +71,7 @@ Arguments:
 		defOutFile		= "/tmp/t"
 		defDecrypt		= false
 		defEncrypt		= false
+		defPassword		= ""
 	)
 
 	flag.StringVar(&SearchKey, "searchkey", defSearchKey, "")
@@ -80,6 +84,8 @@ Arguments:
 	flag.BoolVar(&Decrypt, "--decrypt", defDecrypt, "")
 	flag.BoolVar(&Encrypt, "e", defEncrypt, "")
 	flag.BoolVar(&Encrypt, "--encrypt", defEncrypt, "")
+	flag.StringVar(&Password, "p", defPassword, "")
+	flag.StringVar(&Password, "password", defPassword, "")
 
 /*	if SearchKey == "" && Decrypt == false && Encrypt == false {
 /*		flag.Usage();
@@ -106,24 +112,31 @@ func askForPassword() string {
 		log.Fatal(err)
 	}
 
+	return checkPwdLength(result)
+}
+
+func checkPwdLength(s string) string {
 	// check that password is at least 32 bytes. If not, add enough characters 
 	// to make it 32 bytes long.
 	// Clearly this is no NSA-safe but it'll suffice...
-	if len(result) < 32 {
-		difference := 32 - len(result)
-		var s string
+	if len(s) < 32 {
+		difference := 32 - len(s)
+		var pad string
 		for i := 0; i < difference; i++ {
-			s += "F"
+			pad += "F"
 		}
-		return result + s
+		return s + pad
 	}
-	return result
+	// password is at least 32 bytes long, return it untouched
+	return s
 }
+
 
 
 func main() {
 	// initialize cli arguments
 	flag.Parse()
+	var keyForEncryption []byte
 	//textToEncrypt := "abcdeFUUUUUUUU"
 	//keyForEncryption := []byte("example key 1234")
 
@@ -135,8 +148,12 @@ func main() {
 		panic(rerr)
 	}
 
-	// ask the user for a password
-	keyForEncryption := []byte(askForPassword())
+	if Password == "" {
+		// ask the user for a password
+		keyForEncryption = []byte(askForPassword())
+	} else {
+		keyForEncryption = []byte(checkPwdLength(Password))
+	}
 
 	// Get the GCM
 	gcm, err := gencrypt.NewGCM(keyForEncryption)
