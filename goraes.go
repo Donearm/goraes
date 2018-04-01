@@ -14,11 +14,13 @@ package main
 import (
 	"fmt"
 	"os"
+	"io/ioutil"
 	"flag"
 	"log"
 	_ "encoding/json"
 
 	"github.com/zfeldt/gencrypt"
+	"github.com/julienroland/copro/prompt"
 )
 
 const (
@@ -28,6 +30,8 @@ const (
 	ansiReset = "\033[0m"
 )
 
+var SearchKey, InFile, OutFile string
+var Decrypt, Encrypt bool
 
 // parse flags
 func init() {
@@ -53,8 +57,6 @@ Arguments:
 		Set program to encrypt mode
 
 `
-	var SearchKey, InFile, OutFile string
-	var Decrypt, Encrypt bool
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, usageMessage)
@@ -94,12 +96,35 @@ func openFile(f string) *os.File {
 	return fl
 }
 
+func askForPassword() string {
+	// this uses julienroland/copro/prompt library
+	ask := prompt.NewPassword()
+	ask.Question = "Enter Password"
+
+	result, err := ask.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return result
+}
+
 
 func main() {
 	// initialize cli arguments
 	flag.Parse()
-	textToEncrypt := "abcdeFUUUUUUUU"
-	keyForEncryption := []byte("example key 1234")
+	//textToEncrypt := "abcdeFUUUUUUUU"
+	//keyForEncryption := []byte("example key 1234")
+
+	// Load file to encrypt in memory
+	file := openFile(InFile)
+	defer file.Close()
+	fileToEncrypt, rerr := ioutil.ReadAll(file)
+	if rerr != nil {
+		panic(rerr)
+	}
+
+	// ask the user for a password
+	keyForEncryption := []byte(askForPassword())
 
 	// Get the GCM
 	gcm, err := gencrypt.NewGCM(keyForEncryption)
@@ -108,19 +133,23 @@ func main() {
 	}
 
 	// Encrypt the data
-	encryptedText, eerr := gcm.AESEncrypt([]byte(textToEncrypt))
+	encryptedText, eerr := gcm.AESEncrypt(fileToEncrypt)
 	if eerr != nil {
 		panic(eerr)
 	}
 
-	fmt.Println(string(encryptedText))
-
 	// Decrypt the data
+	/*
 	decryptedText, derr := gcm.AESDecrypt(encryptedText)
 	if derr != nil {
 		panic(derr)
 	}
+	*/
 
-	fmt.Println(string(decryptedText))
+	// write back file in encrypted format
+	werr := ioutil.WriteFile(OutFile, encryptedText, 0644)
+	if werr != nil {
+		panic(err)
+	}
 }
 
