@@ -105,6 +105,18 @@ func askForPassword() string {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// check that password is at least 32 bytes. If not, add enough characters 
+	// to make it 32 bytes long.
+	// Clearly this is no NSA-safe but it'll suffice...
+	if len(result) < 32 {
+		difference := 32 - len(result)
+		var s string
+		for i := 0; i < difference; i++ {
+			s += "F"
+		}
+		return result + s
+	}
 	return result
 }
 
