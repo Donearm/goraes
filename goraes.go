@@ -87,9 +87,6 @@ Arguments:
 	flag.StringVar(&Password, "p", defPassword, "")
 	flag.StringVar(&Password, "password", defPassword, "")
 
-/*	if SearchKey == "" && Decrypt == false && Encrypt == false {
-/*		flag.Usage();
-/*	} */
 
 }
 
@@ -137,6 +134,12 @@ func main() {
 	// initialize cli arguments
 	flag.Parse()
 	var keyForEncryption []byte
+
+	// Check if we have the minimum amount of parameters
+	if Decrypt == false && Encrypt == false {
+		flag.Usage()
+		os.Exit(1)
+	}
 
 	// Load file to encrypt in memory
 	file := openFile(InFile)
