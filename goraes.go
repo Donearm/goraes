@@ -112,7 +112,7 @@ func askForPassword() string {
 		log.Fatal(err)
 	}
 
-	return checkPwdLength(result)
+	return result
 }
 
 func checkPwdLength(s string) string {
@@ -137,8 +137,6 @@ func main() {
 	// initialize cli arguments
 	flag.Parse()
 	var keyForEncryption []byte
-	//textToEncrypt := "abcdeFUUUUUUUU"
-	//keyForEncryption := []byte("example key 1234")
 
 	// Load file to encrypt in memory
 	file := openFile(InFile)
@@ -150,7 +148,7 @@ func main() {
 
 	if Password == "" {
 		// ask the user for a password
-		keyForEncryption = []byte(askForPassword())
+		keyForEncryption = []byte(checkPwdLength(askForPassword()))
 	} else {
 		keyForEncryption = []byte(checkPwdLength(Password))
 	}
