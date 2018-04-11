@@ -14,12 +14,16 @@ package main
 import (
 	"fmt"
 	"os"
+	"io"
 	"io/ioutil"
 	"flag"
 	"log"
 	_ "encoding/json"
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
 
-	"github.com/zfeldt/gencrypt"
+	_ "github.com/zfeldt/gencrypt"
 	"github.com/julienroland/copro/prompt"
 )
 
@@ -157,28 +161,49 @@ func main() {
 		keyForEncryption = []byte(checkPwdLength(Password))
 	}
 
-	// Get the GCM
-	gcm, err := gencrypt.NewGCM(keyForEncryption)
-	if err != nil {
-		panic(err)
-	}
-
 	if Encrypt {
 		// Encrypt the data
-		encryptedText, eerr := gcm.AESEncrypt(fileToWork)
-		if eerr != nil {
-			panic(eerr)
+		c, cerr := aes.NewCipher(keyForEncryption)
+		if cerr != nil {
+			panic(cerr)
 		}
 
-		// write back file in encrypted format
+		gcm, err := cipher.NewGCM(c)
+		if err != nil {
+			panic(err)
+		}
+
+		nonce := make([]byte, gcm.NonceSize())
+		if _, nerr := io.ReadFull(rand.Reader, nonce); nerr != nil {
+			panic(nerr)
+		}
+		encryptedText := gcm.Seal(nonce, nonce, fileToWork, nil)
+
 		werr := ioutil.WriteFile(OutFile, encryptedText, 0644)
 		if werr != nil {
 			panic(werr)
 		}
+
 		os.Exit(0)
 	} else {
 		// Decrypt the data
-		decryptedText, derr := gcm.AESDecrypt(fileToWork)
+		c, cerr := aes.NewCipher(keyForEncryption)
+		if cerr != nil {
+			panic(cerr)
+		}
+
+		gcm, gerr := cipher.NewGCM(c)
+		if gerr != nil {
+			panic(gerr)
+		}
+
+		nonceSize := gcm.NonceSize()
+		if len(fileToWork) < nonceSize {
+			panic("ciphertext too short")
+		}
+
+		nonce, decryptedText := fileToWork[:nonceSize], fileToWork[nonceSize:]
+		decryptedText, derr := gcm.Open(nil, nonce, decryptedText, nil)
 		if derr != nil {
 			panic(derr)
 		}
