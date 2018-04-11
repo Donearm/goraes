@@ -135,7 +135,8 @@ func main() {
 	flag.Parse()
 	var keyForEncryption []byte
 
-	// Check if we have the minimum amount of parameters
+	// Check if we have the minimum amount of parameters and not both have been 
+	// set at the same time
 	if (Decrypt == false && Encrypt == false) || (Decrypt == true && Encrypt == true) {
 		flag.Usage()
 		os.Exit(1)
@@ -144,7 +145,7 @@ func main() {
 	// Load file to encrypt in memory
 	file := openFile(InFile)
 	defer file.Close()
-	fileToEncrypt, rerr := ioutil.ReadAll(file)
+	fileToWork, rerr := ioutil.ReadAll(file)
 	if rerr != nil {
 		panic(rerr)
 	}
@@ -162,24 +163,33 @@ func main() {
 		panic(err)
 	}
 
-	// Encrypt the data
-	encryptedText, eerr := gcm.AESEncrypt(fileToEncrypt)
-	if eerr != nil {
-		panic(eerr)
+	if Encrypt {
+		// Encrypt the data
+		encryptedText, eerr := gcm.AESEncrypt(fileToWork)
+		if eerr != nil {
+			panic(eerr)
+		}
+
+		// write back file in encrypted format
+		werr := ioutil.WriteFile(OutFile, encryptedText, 0644)
+		if werr != nil {
+			panic(werr)
+		}
+		os.Exit(0)
+	} else {
+		// Decrypt the data
+		decryptedText, derr := gcm.AESDecrypt(fileToWork)
+		if derr != nil {
+			panic(derr)
+		}
+
+		// write back file in plaintext format
+		werr := ioutil.WriteFile(OutFile, decryptedText, 0644)
+		if werr != nil {
+			panic(werr)
+		}
+		os.Exit(0)
 	}
 
-	// Decrypt the data
-	/*
-	decryptedText, derr := gcm.AESDecrypt(encryptedText)
-	if derr != nil {
-		panic(derr)
-	}
-	*/
-
-	// write back file in encrypted format
-	werr := ioutil.WriteFile(OutFile, encryptedText, 0644)
-	if werr != nil {
-		panic(err)
-	}
 }
 
