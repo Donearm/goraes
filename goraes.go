@@ -136,7 +136,7 @@ func main() {
 	var keyForEncryption []byte
 
 	// Check if we have the minimum amount of parameters
-	if Decrypt == false && Encrypt == false {
+	if (Decrypt == false && Encrypt == false) || (Decrypt == true && Encrypt == true) {
 		flag.Usage()
 		os.Exit(1)
 	}
