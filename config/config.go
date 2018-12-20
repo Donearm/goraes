@@ -1,4 +1,4 @@
-package main
+package config
 
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (c) 2018, Gianluca Fiore
@@ -17,8 +17,8 @@ import (
 )
 
 type Paths struct {
-	OutFile		string	`json:"OutFile"`
 	InFile		string	`json:"InFile"`
+	OutFile		string	`json:"OutFile"`
 }
 
 // Load config file
@@ -42,20 +42,4 @@ func LoadConfig() Paths {
 	}
 
 	return config
-}
-
-// Update config file
-func UpdateConfig(c Paths) {
-	file, oErr := os.Open("conf.json")
-	if oErr != nil {
-		panic(oErr)
-	}
-	defer file.Close()
-
-	j, jErr := json.MarshalIndent(c, "", " ")
-	if jErr != nil {
-		panic(jErr)
-	}
-
-	file.Write(j)
 }
