@@ -6,14 +6,17 @@ A simple cli utility to encrypt/decrypt plaintext files with AES. It uses a defa
 
 It can be used to encrypt or decrypt any text file but I've specifically written it to handle login credentials for my online and offline accounts. It thus uses a json file similar to:
 
+```json
 	"AccountName": {
 		"username": "myusername",
 		"password": "mypassword",
 		"email": "emailtologin"
 	}
+```
 
 and so on, one entry for each account. Multiple accounts in the same site are grouped under a further json object level
 
+```json
     "MainSite": {
         "url": "websiteurl",
         "account1": {
@@ -23,11 +26,13 @@ and so on, one entry for each account. Multiple accounts in the same site are gr
         },
         "account2": {
 			...
+```
 
 for as many accounts you have.
 
 #### How to use it
 
+```go
 	Arguments:
 		-s|-searckey <word>
 			Search for matching account names
@@ -46,6 +51,7 @@ for as many accounts you have.
 
 		-p|-password
 			Give encryption/decryption password directly on the command line
+```
 
 If no inputfile or outputfile are given, defaults to those set up in the config file. Encryption or decryption mode must be set. If no `-p` password given, a prompt will ask for it.
 
