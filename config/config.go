@@ -1,3 +1,4 @@
+// Handle Goraes configuration file
 package config
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -16,12 +17,13 @@ import (
 	"os"
 )
 
+// The paths struct. A InFile and OutFile, both strings, are the only elements
 type Paths struct {
 	InFile		string	`json:"InFile"`
 	OutFile		string	`json:"OutFile"`
 }
 
-// Load config file
+// Load the config file
 func LoadConfig() Paths {
 	var config Paths
 

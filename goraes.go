@@ -1,3 +1,4 @@
+// Encrypt/decrypt plaintext files with AES
 package main
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -111,6 +112,7 @@ Arguments:
 
 }
 
+// Open a file and return its handler
 func openFile(f string) *os.File {
 	fl, err := os.OpenFile(f, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0600)
 	if err != nil {
@@ -120,8 +122,8 @@ func openFile(f string) *os.File {
 	return fl
 }
 
+// Prompt to ask for a password. This uses julienroland/copro/prompt library
 func askForPassword() string {
-	// this uses julienroland/copro/prompt library
 	ask := prompt.NewPassword()
 	ask.Question = "Enter Password"
 
@@ -133,9 +135,9 @@ func askForPassword() string {
 	return result
 }
 
+// Check that password is at least 32 bytes. If not, add enough characters
+// to make it 32 bytes long.
 func checkPwdLength(s string) string {
-	// check that password is at least 32 bytes. If not, add enough characters
-	// to make it 32 bytes long.
 	// Clearly this is no NSA-safe but it'll suffice...
 	if len(s) < 32 {
 		difference := 32 - len(s)
