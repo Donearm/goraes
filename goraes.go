@@ -19,11 +19,12 @@ import (
 	"flag"
 	"log"
 	"strconv"
-	_ "encoding/json"
 	"encoding/base64"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+
+	"./config" // local config handler
 
 	"github.com/julienroland/copro/prompt"
 )
@@ -70,14 +71,32 @@ Arguments:
 		fmt.Fprintf(os.Stderr, usageMessage)
 	}
 
-	const (
+	// Load variables from conf.json
+	c := config.LoadConfig()
+
+	var (
 		defSearchKey	= ""
-		defInFile		= "t.json"
-		defOutFile		= "/tmp/t"
+		defInFile		= ""
+		defOutFile		= ""
 		defDecrypt		= false
 		defEncrypt		= false
 		defPassword		= ""
 	)
+
+	// check which and if default paths are set in conf.json. If not, and no -i 
+	// or -d were given on the command line, default to t.json and /tmp/p
+	if c.InFile != "" {
+		defInFile = c.InFile
+	} else {
+		defInFile = "t.json"
+	}
+
+	if c.OutFile != "" {
+		defOutFile = c.OutFile
+	} else {
+		defOutFile = "/tmp/p"
+	}
+
 
 	flag.StringVar(&SearchKey, "searchkey", defSearchKey, "")
 	flag.StringVar(&SearchKey, "s", defSearchKey, "")
@@ -138,6 +157,7 @@ func checkPwdLength(s string) string {
 func main() {
 	// initialize cli arguments
 	flag.Parse()
+
 	var keyForEncryption []byte
 
 	// Check if we have the minimum amount of parameters and not both have been 
