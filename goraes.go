@@ -25,7 +25,6 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 
-	_ "github.com/zfeldt/gencrypt"
 	"github.com/julienroland/copro/prompt"
 )
 
