@@ -10,19 +10,18 @@ package main
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-
 import (
-	"fmt"
-	"os"
-	"io"
-	"io/ioutil"
-	"flag"
-	"log"
-	"strconv"
-	"encoding/base64"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"encoding/base64"
+	"flag"
+	"fmt"
+	"io"
+	"io/ioutil"
+	"log"
+	"os"
+	"strconv"
 
 	"./config" // local config handler
 
@@ -31,9 +30,9 @@ import (
 
 const (
 	// some constants to colorize terminal output with ANSI color codes
-	ansiRed = "\033[0;31m"
-	ansiBlue = "\033[1;34m"
-	ansiReset = "\033[0m"
+	ansiRed		= "\033[0;31m"
+	ansiBlue	= "\033[1;34m"
+	ansiReset	= "\033[0m"
 )
 
 var SearchKey, InFile, OutFile, Password string
@@ -41,7 +40,7 @@ var Decrypt, Encrypt bool
 
 // parse flags
 func init() {
-	var usageMessage  = `
+	var usageMessage = `
 goraes [-i|-inputfile <file>] [-o|-outputfile <file>] [-s|-searchkey <word>] [-d|-decrypt|-e|-encrypt]
 
 goraes encrypts/decrypts a JSON file containing login credentials.
@@ -75,15 +74,15 @@ Arguments:
 	c := config.LoadConfig()
 
 	var (
-		defSearchKey	= ""
-		defInFile		= ""
-		defOutFile		= ""
-		defDecrypt		= false
-		defEncrypt		= false
-		defPassword		= ""
+		defSearchKey = ""
+		defInFile	 = ""
+		defOutFile	 = ""
+		defDecrypt	 = false
+		defEncrypt	 = false
+		defPassword	 = ""
 	)
 
-	// check which and if default paths are set in conf.json. If not, and no -i 
+	// check which and if default paths are set in conf.json. If not, and no -i
 	// or -d were given on the command line, default to t.json and /tmp/p
 	if c.InFile != "" {
 		defInFile = c.InFile
@@ -96,7 +95,6 @@ Arguments:
 	} else {
 		defOutFile = "/tmp/p"
 	}
-
 
 	flag.StringVar(&SearchKey, "searchkey", defSearchKey, "")
 	flag.StringVar(&SearchKey, "s", defSearchKey, "")
@@ -111,11 +109,10 @@ Arguments:
 	flag.StringVar(&Password, "p", defPassword, "")
 	flag.StringVar(&Password, "password", defPassword, "")
 
-
 }
 
 func openFile(f string) *os.File {
-	fl, err :=  os.OpenFile(f, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0600)
+	fl, err := os.OpenFile(f, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0600)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -137,7 +134,7 @@ func askForPassword() string {
 }
 
 func checkPwdLength(s string) string {
-	// check that password is at least 32 bytes. If not, add enough characters 
+	// check that password is at least 32 bytes. If not, add enough characters
 	// to make it 32 bytes long.
 	// Clearly this is no NSA-safe but it'll suffice...
 	if len(s) < 32 {
@@ -152,15 +149,13 @@ func checkPwdLength(s string) string {
 	return s
 }
 
-
-
 func main() {
 	// initialize cli arguments
 	flag.Parse()
 
 	var keyForEncryption []byte
 
-	// Check if we have the minimum amount of parameters and not both have been 
+	// Check if we have the minimum amount of parameters and not both have been
 	// set at the same time
 	if (Decrypt == false && Encrypt == false) || (Decrypt == true && Encrypt == true) {
 		flag.Usage()
@@ -239,4 +234,3 @@ func main() {
 	}
 
 }
-
