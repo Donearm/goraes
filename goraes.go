@@ -18,7 +18,9 @@ import (
 	"io/ioutil"
 	"flag"
 	"log"
+	"strconv"
 	_ "encoding/json"
+	"encoding/base64"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
@@ -168,16 +170,15 @@ func main() {
 			panic(cerr)
 		}
 
-		gcm, err := cipher.NewGCM(c)
-		if err != nil {
-			panic(err)
+		b := base64.StdEncoding.EncodeToString(fileToWork)
+		encryptedText := make([]byte, aes.BlockSize+len(b))
+		iv := encryptedText[:aes.BlockSize]
+		if _, rerr := io.ReadFull(rand.Reader, iv); rerr != nil {
+			panic(rerr)
 		}
 
-		nonce := make([]byte, gcm.NonceSize())
-		if _, nerr := io.ReadFull(rand.Reader, nonce); nerr != nil {
-			panic(nerr)
-		}
-		encryptedText := gcm.Seal(nonce, nonce, fileToWork, nil)
+		cfb := cipher.NewCFBEncrypter(c, iv)
+		cfb.XORKeyStream(encryptedText[aes.BlockSize:], []byte(b))
 
 		werr := ioutil.WriteFile(OutFile, encryptedText, 0644)
 		if werr != nil {
@@ -192,20 +193,21 @@ func main() {
 			panic(cerr)
 		}
 
-		gcm, gerr := cipher.NewGCM(c)
-		if gerr != nil {
-			panic(gerr)
+		if len(fileToWork) < aes.BlockSize {
+			fmt.Println("ciphertext too short")
+			os.Exit(1)
 		}
-
-		nonceSize := gcm.NonceSize()
-		if len(fileToWork) < nonceSize {
-			panic("ciphertext too short")
+		iv := fileToWork[:aes.BlockSize]
+		fileToWork = fileToWork[aes.BlockSize:]
+		cfb := cipher.NewCFBDecrypter(c, iv)
+		cfb.XORKeyStream(fileToWork, fileToWork)
+		unquoted_file, qerr := strconv.Unquote("\"" + string(fileToWork) + "\"")
+		if qerr != nil {
+			fmt.Printf("Unquote: %v\n", qerr)
 		}
-
-		nonce, decryptedText := fileToWork[:nonceSize], fileToWork[nonceSize:]
-		decryptedText, derr := gcm.Open(nil, nonce, decryptedText, nil)
-		if derr != nil {
-			panic(derr)
+		decryptedText, berr := base64.StdEncoding.DecodeString(unquoted_file)
+		if berr != nil {
+			panic(berr)
 		}
 
 		// write back file in plaintext format
@@ -213,6 +215,7 @@ func main() {
 		if werr != nil {
 			panic(werr)
 		}
+
 		os.Exit(0)
 	}
 
