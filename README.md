@@ -30,7 +30,7 @@ and so on, one entry for each account. Multiple accounts in the same site are gr
 
 for as many accounts you have.
 
-#### How to use it
+## How to use it
 
 ```go
 	Arguments:
