@@ -202,7 +202,7 @@ func main() {
 		}
 
 		os.Exit(0)
-	} else {
+	} else if Decrypt {
 		// Decrypt the data
 		c, cerr := aes.NewCipher(keyForEncryption)
 		if cerr != nil {
@@ -233,6 +233,8 @@ func main() {
 		}
 
 		os.Exit(0)
+	} else {
+		flag.Usage()
+		os.Exit(1)
 	}
-
 }
