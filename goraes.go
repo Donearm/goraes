@@ -83,7 +83,7 @@ Arguments:
 		defPassword	 = ""
 	)
 
-	// check which and if default paths are set in conf.json. If not, and no -i
+	// check which and if default paths are set in goraes.json. If not, and no -i
 	// or -d were given on the command line, default to t.json and /tmp/p
 	if c.InFile != "" {
 		defInFile = c.InFile

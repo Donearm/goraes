@@ -15,6 +15,7 @@ package config
 import (
 	"encoding/json"
 	"os"
+	"os/user"
 )
 
 // The paths struct. A InFile and OutFile, both strings, are the only elements
@@ -23,11 +24,23 @@ type Paths struct {
 	OutFile		string	`json:"OutFile"`
 }
 
+// Get user's HOME directory
+func getHomeDir() string {
+	u, err := user.Current()
+	if err != nil {
+		return ""
+	}
+	return u.HomeDir
+}
+
 // Load the config file
 func LoadConfig() Paths {
 	var config Paths
+	var homedir string
 
-	file, oErr := os.Open("conf.json")
+	homedir = getHomeDir()
+
+	file, oErr := os.Open(homedir + "/.goraes.json")
 	if oErr != nil {
 		// there's no config file or it is not readable. Skip it...
 		return config
