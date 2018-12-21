@@ -55,6 +55,19 @@ for as many accounts you have.
 
 If no inputfile or outputfile are given, defaults to those set up in the config file. Encryption or decryption mode must be set. If no `-p` password given, a prompt will ask for it.
 
+## Configuration
+
+It is possible to use a configuration file to avoid typing the input file and/or output file each time the program is invoked. Or if the file is most of the time the same.
+
+The file is in JSON and should be in the HOMEDIR with the name `.goraes.json`. An example of it is given below
+
+```json
+{
+	"InFile": "plaintext.json",
+	"OutFile": "encryptedtext.json"
+}
+```
+
 ## TODO
 
 + search on plaintext file for an account and print the credentials in a readable format (easy to copy/paste)
