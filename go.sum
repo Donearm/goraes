@@ -1,0 +1,12 @@
+github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e h1:fY5BOSpyZCqRo5OhCuC+XN+r/bBCmeuuJtjz+bCNIf8=
+github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
+github.com/julienroland/copro v0.0.0-20170510084809-005fdad2a432 h1:v438hRgP3eQLoKXEAQ6DE+1d9/O/nWtcgCMY7VC3nDE=
+github.com/julienroland/copro v0.0.0-20170510084809-005fdad2a432/go.mod h1:CykMjH25MeTBZqWJ8dcodKE8/FRgrqpe1Z1l9dFk8Ms=
+github.com/julienroland/usg v0.0.0-20160918114137-cb52eabb3d84 h1:85dnNFRw7mhd4fujbFQraFc6lgJNbvZ8ZqV7/YTOd6w=
+github.com/julienroland/usg v0.0.0-20160918114137-cb52eabb3d84/go.mod h1:JbqaH26To+mLqYBTlZi6/G8W5gtrNxZ46yIbCZ3Yl1s=
+github.com/mattn/go-runewidth v0.0.4 h1:2BvfKmzob6Bmd4YsL0zygOqfdFnK7GR4QL06Do4/p7Y=
+github.com/mattn/go-runewidth v0.0.4/go.mod h1:LwmH8dsx7+W8Uxz3IHJYH5QSwggIsqBzpuz5H//U1FU=
+github.com/nsf/termbox-go v0.0.0-20190325093121-288510b9734e h1:Vbib8wJAaMEF9jusI/kMSYMr/LtRzM7+F9MJgt/nH8k=
+github.com/nsf/termbox-go v0.0.0-20190325093121-288510b9734e/go.mod h1:IuKpRQcYE1Tfu+oAQqaLisqDeXgjyyltCfsaoYN18NQ=
+github.com/ttacon/chalk v0.0.0-20160626202418-22c06c80ed31 h1:OXcKh35JaYsGMRzpvFkLv/MEyPuL49CThT1pZ8aSml4=
+github.com/ttacon/chalk v0.0.0-20160626202418-22c06c80ed31/go.mod h1:onvgF043R+lC5RZ8IT9rBXDaEDnpnw/Cl+HFiw+v/7Q=
